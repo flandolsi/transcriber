@@ -11,5 +11,5 @@ https://github.com/mckaywrigley/chatbot-ui.git
 ```
 python backend/app.py
 ```
-
+Backend assumes Cuda. If not uncomment CPU line in app.py (and comment the GPU whisper model load)
 
