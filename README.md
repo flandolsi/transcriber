@@ -9,9 +9,9 @@ https://github.com/mckaywrigley/chatbot-ui.git
 
 an .env.local is required to add backend host:port.
 
-## Bcakend uses fastapi / streaming response
+## Backend uses fastapi / streaming response
 ```
 python backend/app.py
 ```
-
+Backend assumes Cuda. If not uncomment CPU line in app.py (and comment the GPU whisper model load)
 
