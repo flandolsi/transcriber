@@ -9,8 +9,11 @@ import json
 from faster_whisper import WhisperModel
 
 model_size = "base.en"
+# model_size = "large-v2"
 
-model = WhisperModel(model_size, device="cuda", compute_type="float16")
+# model = WhisperModel(model_size, device="cuda", compute_type="float16")
+model = WhisperModel(model_size, device="cpu", compute_type="int8")
+
 
 app = FastAPI()
 
@@ -42,23 +45,21 @@ async def api_create_order(request: Request):
 
     print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 
+
+
     async def recurrent_transcribe():
         for segment in segments:
-            output = "(%s,%s) %s" % (segment.start, segment.end, segment.text)
+            output = "(%s   -> %s,%s) %s" % (segment.id, segment.start, segment.end, segment.text)
             
-
-
-            response = {
-            "detected_lang": info.language,
-            "confidence": round(info.language_probability, 4),
-            "transcript": output
-            }
+            response = {}
+            response = {'id': segment.id , 'lang': info.language,  'start':segment.start, 'end': segment.end, 'text': segment.text}
 
             yield json.dumps(response)
+            # yield transcripts
 
     return StreamingResponse(recurrent_transcribe(), media_type='application/json')
 
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host='0.0.0.0', port=5000)
+    uvicorn.run(app, host='0.0.0.0',port=5000)

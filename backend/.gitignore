@@ -2,3 +2,4 @@ __pycache__/
 *.code-workspace
 backup
 command.sh
+command_test.sh
