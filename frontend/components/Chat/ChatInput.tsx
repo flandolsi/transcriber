@@ -51,7 +51,6 @@ export const ChatInput = ({
   textareaRef,
   showScrollDownButton,
 }: Props) => {
-  const { t } = useTranslation('chat');
 
   const {
     state: { selectedConversation, messageIsStreaming, codeInterpreterEnbaled, prompts },
@@ -148,17 +147,14 @@ export const ChatInput = ({
 
     if (showTimestamps) {
 
-      cleaned_message = selectedConversation?.messages.join()
+      cleaned_message = selectedConversation?.messages
       
     }
     else
     {
 
       for (const message of selectedConversation?.messages) {
-
-        // cleaned_message += message.replace(/ *\([^)]*\) */g, "");   // remove any text between parenthesis 
-
-        cleaned_message = selectedConversation?.messages.join()
+        cleaned_message = selectedConversation?.messages
       }
     }
 

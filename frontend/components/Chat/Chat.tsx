@@ -19,7 +19,7 @@ import {
   updateConversation,
 } from '@/utils/app/conversation';
 
-import { Conversation } from '@/types/chat';
+import { Segment, Conversation } from '@/types/chat';
 import HomeContext from '@/pages/api/home/home.context';
 
 
@@ -51,9 +51,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  // BEGIN NEW
-
   const [percentage, setPercentage] = useState(0)
   const [messageContent, setMessageContent] = useState()
   const [fileIsUploading, setFileIsUploading] = useState(false)
@@ -67,76 +64,88 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       return;
     }
 
+    if (BACKEND_API_HOST == '') {
+      alert('Please set backend host in .env.local')
+      return;
+    }
+
     setFileIsUploading(true)
+
+    try 
+    {
+      const response = await axios({
+        method: 'post',
+        headers: { 
+                  'Content-Type': 'audio/mpeg', //'video/mp4', // 'audio/mpeg' ,  "multipart/form-data",
+                  'Access-Control-Allow-Origin' : '*',
+                  'Access-Control-Allow-Headers' : '*',
+                },
+        url: BACKEND_API_HOST, //API url
+        data: file,
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+        onUploadProgress: progressEvent => {        
+          setPercentage(Math.round(progressEvent.loaded / file.size *100))
+        },
+        onDownloadProgress: progressEvent => {
+
+          var tempText = progressEvent.event.currentTarget.response
+
+          // JSON Parse
+          
+          let theText =''
+          let segments : Segment[] =[]; 
+          
+
+          var data = JSON.parse('['+tempText.replace(/}{/g, "},{")+']')
+
+          for (let i = 0; i < data.length; i++) {
+            theText += data[i]['text']
+
+            let segment : Segment = {startTime:'', endTime:'',text:''};
+
+            segment.startTime = data[i]['start']
+            segment.endTime   = data[i]['end']
+            segment.text      = data[i]['text']
+
+            segments.push(segment)
+
+          }
+
+          // Test implementation  
+          let updatedConversation: Conversation;
+          updatedConversation = selectedConversation
+          updatedConversation.messages = theText
+          updatedConversation.segments = segments
+
+          
+
+
+          updatedConversation.segments.push()
+
+
+
+          homeDispatch({
+            field: 'selectedConversation',
+            value: updatedConversation,
+          });
+
+        },
   
-    const response = await axios({
-          method: 'post',
-          headers: { 
-                    'Content-Type': 'audio/mpeg', //'video/mp4', // 'audio/mpeg' ,  "multipart/form-data",
-                    'Access-Control-Allow-Origin' : '*',
-                    'Access-Control-Allow-Headers' : '*',
-                  },
-          url: BACKEND_API_HOST, //API url
-          data: file,
-          maxContentLength: Infinity,
-          maxBodyLength: Infinity,
-          onUploadProgress: progressEvent => {
+      });
 
-                              
-                              var percent = Math.round(progressEvent.loaded / file.size *100)
-                              setPercentage(percent)
-                    
-                              console.log(percent)
-                    
-                            },
-          onDownloadProgress: progressEvent => {
+    } 
+    catch (error) 
+    {
+      console.log(error);
+    }
 
-            var tempText = progressEvent.event.currentTarget.response
-
-            // JSON Parse
-            var data = JSON.parse(tempText)
-
-            // Test implementation  
-            let updatedConversation: Conversation;
-            updatedConversation = selectedConversation
-            updatedConversation.messages = [tempText['transcript'],""]
-
-            homeDispatch({
-              field: 'selectedConversation',
-              value: updatedConversation,
-            });
-
-
-          },
-    
-        });
-
-
-  
-    // console.log(response)
-
-
-    // Test implementation  
-    let updatedConversation: Conversation;
-    updatedConversation = selectedConversation
-    updatedConversation.messages = [response['data']['transcript'],""]
-    updatedConversation.name=file.name 
-
-
-
-    homeDispatch({
-      field: 'selectedConversation',
-      value: updatedConversation,
-    });
-
+    console.log(selectedConversation)
 
     setPercentage(0)
     setFileIsUploading(false)
   
-  };
-
-  // END NEW
-
+  }
 
   const handleSettings = () => {
     setShowSettings(!showSettings);
