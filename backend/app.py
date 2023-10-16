@@ -31,7 +31,7 @@ app.add_middleware(
 
 @app.post("/")
 async def api_create_order(request: Request):
-    print(request.headers)
+    # print(request.headers)
 
     data = await request.body()
 
@@ -43,19 +43,18 @@ async def api_create_order(request: Request):
 
     segments, info = model.transcribe(temp.name, beam_size=5)
 
-    print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
+    # print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 
 
 
     async def recurrent_transcribe():
         for segment in segments:
-            output = "(%s   -> %s,%s) %s" % (segment.id, segment.start, segment.end, segment.text)
+            # output = "(%s   -> %s,%s) %s" % (segment.id, segment.start, segment.end, segment.text)
             
             response = {}
             response = {'id': segment.id , 'lang': info.language,  'start':segment.start, 'end': segment.end, 'text': segment.text}
 
             yield json.dumps(response)
-            # yield transcripts
 
     return StreamingResponse(recurrent_transcribe(), media_type='application/json')
 
