@@ -3,6 +3,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { ChatInput } from './ChatInput';
+import { SimpleReactTable } from './TableRows';
 import { BACKEND_API_HOST } from '@/utils/app/const';
 
 import {
@@ -11,6 +12,8 @@ import {
   useContext,
   useRef,
   useState,
+  useMemo,
+  useEffect,
 } from 'react';
 import toast from 'react-hot-toast';
 import {
@@ -21,6 +24,7 @@ import {
 
 import { Segment, Conversation } from '@/types/chat';
 import HomeContext from '@/pages/api/home/home.context';
+
 
 
 
@@ -44,6 +48,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   } = useContext(HomeContext);
 
 
+  
+
+
+
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showScrollDownButton, setShowScrollDownButton] = useState<boolean>(false);
@@ -57,8 +65,24 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
 
 
+  // const [data, setData] = useState(() => getData())
+  // const [originalData] = useState(data)
+  // const [skipPageReset, setSkipPageReset] = useState(false)
+
+
+
+  // const resetData = () => setData(originalData)
+
+  // After data chagnes, we turn the flag back off
+  // so that if data actually changes when we're not
+  // editing it, the page is reset
+  // useEffect(() => {
+  //   setSkipPageReset(false)
+  // }, [data])
 
   const onUploadFile = async (file) => {
+
+
 
     if (!file) {
       return;
@@ -102,10 +126,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           for (let i = 0; i < data.length; i++) {
             theText += data[i]['text']
 
-            let segment : Segment = {startTime:'', endTime:'',text:''};
+            let segment : Segment = {id:'', startTime:'', endTime:'',text:''};
 
-            segment.startTime = data[i]['start']
-            segment.endTime   = data[i]['end']
+            segment.id = data[i]['id']
+            segment.startTime = String(data[i]['start']).substring(0,4)
+            segment.endTime   = String(data[i]['end']).substring(0,4)
             segment.text      = data[i]['text']
 
             segments.push(segment)
@@ -117,8 +142,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           updatedConversation = selectedConversation
           updatedConversation.messages = theText
           updatedConversation.segments = segments
-
-          
 
 
           updatedConversation.segments.push()
@@ -247,7 +270,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
         <label>File properties</label>
 
-        <ChatInput
+        {/* <ChatInput
             stopConversationRef={stopConversationRef}
             textareaRef={textareaRef}
             // onSend={(message, plugin) => {
@@ -261,9 +284,20 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             //   }
             // }}
             // showScrollDownButton={showScrollDownButton}
-          />
+          /> */}
+
+
+          <SimpleReactTable />
+          
 
           </div>
+
+          
+
+
+
+
+
 
 
       )}

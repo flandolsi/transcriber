@@ -25,8 +25,6 @@ import {
   useState,
 } from 'react';
 
-import { useTranslation } from 'next-i18next';
-
 import { Message } from '@/types/chat';
 
 
@@ -36,6 +34,7 @@ import HomeContext from '@/pages/api/home/home.context';
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
+  onEditToggle: () => void;
   onRegenerate: () => void;
   onScrollDownClick: () => void;
   stopConversationRef: MutableRefObject<boolean>;
@@ -45,6 +44,7 @@ interface Props {
 
 export const ChatInput = ({
   onSend,
+  onEditToggle,
   onRegenerate,
   onScrollDownClick,
   stopConversationRef,
@@ -146,15 +146,16 @@ export const ChatInput = ({
     let cleaned_message = ''
 
     if (showTimestamps) {
-
-      cleaned_message = selectedConversation?.messages
+      for (const segment of selectedConversation?.segments) {
+        cleaned_message += "["+segment.startTime + " , " +  segment.endTime + "]" +   segment.text
+      }
       
     }
     else
     {
 
-      for (const message of selectedConversation?.messages) {
-        cleaned_message = selectedConversation?.messages
+      for (const segment of selectedConversation?.segments) {
+        cleaned_message +=segment.text
       }
     }
 
@@ -208,7 +209,7 @@ export const ChatInput = ({
 
         <button
           className="invisible group-hover:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-          // onClick={copyOnClick}
+          onClick={onEditToggle}
         >
           <IconEdit size={20} />
         </button>
