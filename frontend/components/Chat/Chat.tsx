@@ -4,6 +4,7 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { ChatInput } from './ChatInput';
 import { SimpleReactTable } from './TableRows';
+import { AudioPlayer } from './AudioPlayer';
 import { BACKEND_API_HOST } from '@/utils/app/const';
 
 import {
@@ -62,6 +63,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [percentage, setPercentage] = useState(0)
   const [messageContent, setMessageContent] = useState()
   const [fileIsUploading, setFileIsUploading] = useState(false)
+  const [fileURL, setFileURL] = useState('')
+  const [seekSeconds, setSeekSeconds] = useState('')
 
 
 
@@ -87,6 +90,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     if (!file) {
       return;
     }
+
 
     if (BACKEND_API_HOST == '') {
       alert('Please set backend host in .env.local')
@@ -202,6 +206,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       if (file) {
 
         console.log(file)
+
+        setFileURL(URL.createObjectURL(file))
+        console.log(fileURL)
+
         onUploadFile(file)
       }
 
@@ -268,6 +276,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
         <div className="w-full py-20">
 
+        <AudioPlayer 
+          srcRef={fileURL}
+          seekSeconds={seekSeconds}
+        />
+
         <label>File properties</label>
 
         {/* <ChatInput
@@ -287,7 +300,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           /> */}
 
 
-          <SimpleReactTable />
+          <SimpleReactTable 
+            onSelectSegment={(start, end) => {
+              console.log(start + " : " + end) 
+              setSeekSeconds(start)
+            }}
+          />
           
 
           </div>

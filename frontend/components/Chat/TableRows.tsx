@@ -2,12 +2,18 @@ import React from "react";
 import { useContext, useState, useCallback, useMemo} from 'react';
 import HomeContext from '@/pages/api/home/home.context';
 
-import {IconEdit, IconCopy, IconClockHour3, IconFaceId,IconLock, IconLockOpen } from '@tabler/icons-react';
+import {IconEdit, IconCopy, IconClockHour3, IconFaceId,IconLock, IconLockOpen, IconUvIndex } from '@tabler/icons-react';
+
+
+interface Props {
+  onSelectSegment: (start: string, end: string) => void;
+}
 
 
 export  const SimpleReactTable =({
+  onSelectSegment,
 
-}) => {
+}: Props) => {
 
 
 const {
@@ -18,11 +24,9 @@ const {
 
     const [isEditable, setIsEditable] =useState(false)
     const [showTimestamps, setShowTimestamps] =useState(false)
-    const [selectedRow, setSelectedRow] = React.useState(-1);
-    const [editedRow,setEditedRow] = React.useState(-1);
-    const [value, setValue] = React.useState('James Bond')
-    const [editValue, setEditValue] = React.useState('')
-    const [mode, setMode] = React.useState('view')
+    const [selectedRow, setSelectedRow] = useState(-1);
+    const [editValue, setEditValue] = useState('')
+  
 
 
     const onChange = useCallback((e) => {
@@ -72,17 +76,22 @@ const {
               e.stopPropagation();
                 }}>
             <tr>
-              <th className="w-20">ID</th>
+              <th className="w-20">{showTimestamps && (<p>ID</p>)} </th>
               <th className={(showTimestamps  ? 'w-20' : 'w-0')}>{showTimestamps && (<p>Start [s]</p>)}  </th>
               <th className={(showTimestamps  ? 'w-20' : 'w-0')}>{showTimestamps && (<p>End [s]</p>)}    </th>
-              <th className='w-full'>Text</th>
+              <th className='w-full'>{showTimestamps && (<p>Text</p>)} </th>
             </tr>
           </thead>
           <tbody>
             {selectedConversation?.segments.map((segment, index) => {
               return (
-                <tr key={index} onClick={() => {setSelectedRow(segment.id); setEditValue(segment.text);  }} className={"clickable-row ".concat(selectedRow === segment.id ? "selected" : "")}>
-                  <td className="text-center" >{segment.id}</td>  
+                <tr key={index} onClick={() => {
+                      setSelectedRow(segment.id); 
+                      setEditValue(segment.text); 
+                      onSelectSegment(segment.startTime,segment.endTime)
+                      }} className={"clickable-row ".concat(selectedRow === segment.id ? "selected" : "")}>
+
+                  <td className="text-center" >{showTimestamps && (<p>{segment.id}</p>)}</td>  
                   <td> {showTimestamps && (<p>{segment.startTime}</p>)}</td>
                   <td>{showTimestamps && (<p>{segment.endTime}</p>)}</td>
                   <td>

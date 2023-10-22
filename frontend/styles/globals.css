@@ -150,3 +150,12 @@ tr {
 .selected, .selected:hover {
   background-color: rgb(206, 126, 22);
 }
+
+
+
+input[type='range'] {
+  height:3px;
+}
+input[type='range']::-webkit-slider-thumb {
+  visibility: hidden;
+}
