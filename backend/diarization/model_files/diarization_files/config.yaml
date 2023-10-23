@@ -1,0 +1,19 @@
+version: 3.0.0
+
+pipeline:
+  name: pyannote.audio.pipelines.SpeakerDiarization
+  params:
+    clustering: AgglomerativeClustering
+    embedding: /home/cbeh/Projects/transcriber/backend/diarization/pyannote_files/speaker-embedding.onnx
+    embedding_batch_size: 1
+    embedding_exclude_overlap: true
+    segmentation: /home/cbeh/Projects/transcriber/backend/diarization/pyannote_files/pytorch_model.bin
+    segmentation_batch_size: 32
+
+params:
+  clustering:
+    method: centroid
+    min_cluster_size: 12
+    threshold: 0.7045654963945799
+  segmentation:
+    min_duration_off: 0.0
