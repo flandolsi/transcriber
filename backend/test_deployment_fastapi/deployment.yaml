@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transcriber-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transcriber-deployment
+  template:
+    metadata:
+      labels:
+        app: transcriber-deployment
+    spec:
+      containers:
+      - name: transcriber-deployment
+        image: auroradevacr.azurecr.io/generative-ai/transcriber_backend_fastapi:v0.1
+        resources:
+          limits:
+            cpu: "8"
+            memory: 32Gi
+          requests:
+            cpu: "8"
+            memory: 32Gi
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transcriber-service
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    protocol: TCP
+    port: 5000
+    targetPort: 5000
+  selector:
+    component: transcriber-deployment

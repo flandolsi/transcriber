@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: transcriber-inference-service-configmap
+  namespace: generative-ai
+data:
+  model-name: transcriber-inference

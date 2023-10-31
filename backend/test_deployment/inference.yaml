@@ -1,0 +1,25 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: transcriber-inference
+spec:
+  predictor:
+    # minReplicas: 0
+    containers:
+    - name: kserve-container
+      image: auroradevacr.azurecr.io/generative-ai/transcriber_backend:v0.5
+      resources:
+        limits:
+          cpu: "8"
+          memory: 32Gi
+        requests:
+          cpu: "8"
+          memory: 32Gi
+      env:
+        - name: MODEL_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: transcriber-inference-service-configmap
+              key: model-name
+      args:
+        - --model_name=$(MODEL_NAME)

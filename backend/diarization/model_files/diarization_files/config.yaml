@@ -4,10 +4,10 @@ pipeline:
   name: pyannote.audio.pipelines.SpeakerDiarization
   params:
     clustering: AgglomerativeClustering
-    embedding: /home/cbeh/Projects/transcriber/backend/diarization/pyannote_files/speaker-embedding.onnx
+    embedding: /home/cbeh/Projects/transcriber/backend/diarization/model_files/diarization_files/wespeaker-embedding.onnx
     embedding_batch_size: 1
     embedding_exclude_overlap: true
-    segmentation: /home/cbeh/Projects/transcriber/backend/diarization/pyannote_files/pytorch_model.bin
+    segmentation: /home/cbeh/Projects/transcriber/backend/diarization/model_files/diarization_files/pytorch_model.bin
     segmentation_batch_size: 32
 
 params:
